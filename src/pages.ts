@@ -24,9 +24,19 @@ export type Page =
 const ID = { inbox: 11, detail: 12, decision: 13 }
 const ACTIONS = ['Approve & send', 'Dismiss without sending']
 
+const encoder = new TextEncoder()
+
 function label(value: string, max = 56) {
   const text = value.replace(/\s+/g, ' ').trim()
-  return text.length <= max ? text : `${text.slice(0, max - 3)}...`
+  if (encoder.encode(text).length <= max) return text
+  let clipped = ''
+  let remaining = max - 3
+  for (const codePoint of text) {
+    remaining -= encoder.encode(codePoint).length
+    if (remaining < 0) break
+    clipped += codePoint
+  }
+  return `${clipped}...`
 }
 
 function inboxLabels(rows: Summary[]) {
@@ -76,8 +86,8 @@ export function containers(page: Page) {
       : 'Double-tap to inbox')))
   } else {
     textObject.push(text(2, 'recipient', 43, 30, `To: ${label(page.item.sender, 42)}`))
-    textObject.push(text(3, 'draft', 75, 96, page.item.replyDraft, false, true))
-    listObject.push(list(ID.decision, 'decision', 176, 67, ACTIONS))
+    textObject.push(text(3, 'draft', 73, 80, page.item.replyDraft, false, true))
+    listObject.push(list(ID.decision, 'decision', 157, 86, ACTIONS))
     textObject.push(text(4, 'help', 249, 33, 'Scroll to choose  /  Tap to confirm  /  Double-tap to back'))
   }
   return { containerTotalNum: textObject.length + listObject.length, textObject, listObject }
@@ -92,6 +102,8 @@ function selectedRow(event: List_ItemEvent, id: number, name: string, labels: st
   if (event.containerID !== id && event.containerName !== name) return
   const index = event.currentSelectItemIndex
   const rowName = event.currentSelectItemName
+  // The simulator's protobuf event omits the zero index on the first row.
+  if (index === undefined && !rowName) return labels.length ? 0 : undefined
   if (index !== undefined && Number.isInteger(index) && labels[index] && (!rowName || labels[index] === rowName)) return index
   if (!rowName) return
   const byName = labels.indexOf(rowName)

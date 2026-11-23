@@ -7,7 +7,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "tsc --noEmit && vite build",
-    "pack": "npm run build && evenhub pack app.json dist",
+    "pack": "npm run build && evenhub pack app.json dist --sdk-ver 0.0.10 -o app.ehpk",
     "simulate": "evenhub-simulator http://127.0.0.1:5173",
     "backend": "node server/index.js"
   },
