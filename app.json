@@ -1,0 +1,12 @@
+{
+  "package_id": "com.glancegram.g2",
+  "name": "GlanceGram",
+  "version": "0.1.0",
+  "edition": "202601",
+  "min_sdk_version": "0.0.10",
+  "entrypoint": "index.html",
+  "permissions": [
+    {"name": "network", "desc": "Read summaries and send reply decisions to the local GlanceGram service.", "whitelist": ["http://127.0.0.1:8787"]}
+  ],
+  "supported_languages": ["en"]
+}

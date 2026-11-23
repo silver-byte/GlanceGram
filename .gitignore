@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*_token.txt
+bot_token.txt
+*.ehpk
+.DS_Store
+/server/data/
+/openspec/
